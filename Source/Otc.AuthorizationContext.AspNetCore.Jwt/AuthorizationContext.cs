@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 using Otc.AuthorizationContext.Abstractions;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Otc.AuthorizationContext.AspNetCore.Jwt
 {
@@ -14,7 +14,8 @@ namespace Otc.AuthorizationContext.AspNetCore.Jwt
 
         public AuthorizationContext(IHttpContextAccessor httpContextAccessor)
         {
-            this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            this.httpContextAccessor = httpContextAccessor ??
+                throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         private TAuthorizationData authorizationData;
@@ -25,14 +26,13 @@ namespace Otc.AuthorizationContext.AspNetCore.Jwt
             {
                 if (authorizationData == null)
                 {
-                    var claimsIdentity = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
-
-                    if (claimsIdentity == null)
+                    if (httpContextAccessor.HttpContext?.User?.Identity is not ClaimsIdentity claimsIdentity)
                     {
                         throw new UnauthorizedAccessException();
                     }
 
-                    var authorizationData = claimsIdentity.Claims.SingleOrDefault(c => c.Type == JwtConfiguration.AuthorizationDataJwtTypeName)?.Value;
+                    var authorizationData = claimsIdentity.Claims.SingleOrDefault(c =>
+                        c.Type == JwtConfiguration.AuthorizationDataJwtTypeName)?.Value;
 
                     // Provide compatibility to legacy SessionContext
                     if(authorizationData == null)
@@ -45,9 +45,8 @@ namespace Otc.AuthorizationContext.AspNetCore.Jwt
                         throw new InvalidOperationException("Fail to read authorization context data.");
                     }
 
-                    this.authorizationData = JsonConvert.DeserializeObject<TAuthorizationData>(authorizationData);
+                    this.authorizationData = JsonSerializer.Deserialize<TAuthorizationData>(authorizationData);
                 }
-
                 return authorizationData;
             }
         }

@@ -1,4 +1,4 @@
-﻿namespace Otc.AuthorizationContext.Abstractions
+namespace Otc.AuthorizationContext.Abstractions
 {
     /// <summary>
     /// Provide a way to get the authorization data.

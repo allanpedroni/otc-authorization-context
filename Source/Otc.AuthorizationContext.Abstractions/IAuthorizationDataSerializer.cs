@@ -1,4 +1,4 @@
-﻿namespace Otc.AuthorizationContext.Abstractions
+namespace Otc.AuthorizationContext.Abstractions
 {
     /// <summary>
     /// Provide the authorization data serializer (token generation).

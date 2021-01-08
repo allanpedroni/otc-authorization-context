@@ -1,15 +1,17 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Otc.AuthorizationContext.Abstractions;
 using Otc.AuthorizationContext.AspNetCore.Jwt;
-using System;
-using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class OtcAuthorizationContextServiceCollectionExtensions
     {
-        public static IServiceCollection AddOtcAspNetCoreJwtAuthorizationContext(this IServiceCollection services, Otc.AuthorizationContext.AspNetCore.Jwt.JwtConfiguration jwtConfiguration)
+        public static IServiceCollection AddOtcAspNetCoreJwtAuthorizationContext(
+            this IServiceCollection services,
+            JwtConfiguration jwtConfiguration)
         {
             if (services == null)
             {
@@ -25,7 +27,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton(typeof(IAuthorizationDataSerializer<>), typeof(AuthorizationDataSerializer<>));
             services.AddScoped(typeof(IAuthorizationContext<>), typeof(AuthorizationContext<>));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     var apiConfiguration = jwtConfiguration;
