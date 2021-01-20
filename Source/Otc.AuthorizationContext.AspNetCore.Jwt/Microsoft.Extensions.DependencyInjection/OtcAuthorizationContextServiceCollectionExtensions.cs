@@ -28,7 +28,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped(typeof(IAuthorizationContext<>), typeof(AuthorizationContext<>));
 
             services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddAuthentication(option =>
+                {
+                    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                })
                 .AddJwtBearer(options =>
                 {
                     var apiConfiguration = jwtConfiguration;
